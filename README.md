@@ -1,7 +1,8 @@
 # tex_docker_alpine
 devcontainer for texlive
 
-Alpine Linuxをベースとした LaTeXの実行環境 (2024/9/20: arm版macに対応)
+- Alpine Linuxをベースとした LaTeXの実行環境 (2024/9/20: arm版macに対応)
+- 2025年度版に対応 (2025/3/19: extractbbの仕様変更により `libc6-compat` では対応できなくなったため)
 
 
 ## 使用したコレクション
