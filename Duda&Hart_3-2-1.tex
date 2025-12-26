@@ -1,0 +1,215 @@
+% Duda & Hart 章2.6 に対応するオリジナル解説スライド（日本語、数式あり）
+\documentclass[dvipdfmx,12pt,notheorems]{beamer}
+\usetheme{metropolis}
+\usefonttheme{professionalfonts}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+% カスタム色コマンド
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\green}[1]{\textcolor{green!40!black}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue!80!black}{#1}}
+
+% メタ情報
+\title{Duda \& Hart \\3.2 MAXIMUM LIKELIHOOD ESTIMATION}
+\subtitle{3.2.1 The General Principle}
+\author{作成者: おおつかたく}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{目次}
+  \tableofcontents
+\end{frame}
+
+\section{Purpose and Background}
+\begin{frame}{目的と背景}
+  \begin{itemize}
+    \item パターン認識では事前確率や条件付き密度を正確に知ることは難しいため、得られたサンプルから確率やパラメータを推定する必要がある。推定法として最尤推定法とベイズ推定がある。
+    \item 今回は教師あり学習における「最尤推定法」の基本原理を解説する。
+  \end{itemize}
+\end{frame}
+
+\section{前提の話}
+\begin{frame}{前提条件}
+  \begin{itemize}
+    \item サンプル集合をクラスごとに分類したとし、$c$ 個のサンプル集合 $\mathcal{X}_1, \dots, \mathcal{X}_c$ があるとする。ここで、$\mathcal{X}_i$ 内のサンプルは、確率法則 $p(\vec{x} | \omega_i)$ に従って独立に抽出されたものである。
+    \item 我々は、$p(\vec{x} | \omega_i)$ が既知の parametric form（パラメータで記述できる形）を持っていると仮定する。よって、$p(\vec{x} | \omega_i)$ はパラメータベクトル $\theta_i$ の値によって一意に決定される。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{前提条件（続き）}
+  \begin{itemize}
+    \item 例えば、$p(\vec{x} | \omega_i) \sim N(\mu_i, \Sigma_i)$ （正規分布）であるかもしれず、この場合、$\theta_i$ の成分には $\mu_i$ と $\Sigma_i$ 両方の成分が含まれることになる。
+    \item そこで、$p(\vec{x} | \omega_i)$ の $\theta_i$ への依存性を明示するために、$p(\vec{x} | \omega_i)$ を $p(\vec{x} | \omega_i, \theta_i)$ と書くことにする。
+    \begin{itemize}
+      \item  $p(\vec{x} | \omega_i; \theta_i)$ と表記することがある。
+      \item 厳密に言えば、$p(\vec{x} | \omega_i, \theta_i)$ という表記は $\theta_i$ が確率変数であることを暗示する（条件付き確率に見える）。
+      \item ここでは最尤推定法による解析において、$\theta_i$ を通常のパラメータとして扱う。
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\section{問題提起・単純化}
+\begin{frame}{問題提起・単純化}
+  \begin{itemize}
+    \item 我々の問題は、サンプルから提供される情報を用いて、未知のパラメータベクトル $\theta_1, \dots, \theta_c$ の良い推定値を得ることである。
+    \item この問題の扱いを単純化するために、「$\mathcal{X}_i$ 内のサンプルは、$i \neq j$ である場合の $\theta_j$ については何の情報も与えない」と仮定
+    \item すなわち、「異なるクラスのパラメータは関数的に独立している」と仮定する。（すべてのクラスのサンプルが同じ共分散行列を共有している場合などこれが当てはまらない場合もある。）
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{問題提起・単純化（続き）}
+  \begin{itemize}
+    \item これにより、各クラスを個別に扱うことができ、クラスの区別を示す記号（添字）を削除して表記を簡略化することができる。
+    \item したがって、この仮定の下では、次のような形式の $c$ 個の独立した問題が存在することになる
+    \begin{itemize}
+      \item 確率法則 $p(\vec{x} | \theta)$ に従って独立に抽出されたサンプル集合 $\mathcal{X}$ を用いて、未知のパラメータベクトル $\theta$ を推定せよ。
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\section{尤度}
+\begin{frame}{尤度}
+  \begin{itemize}
+    \item $\mathcal{X}$ が $n$ 個のサンプルを含んでいるとし、$\mathcal{X} = \{\vec{x}_1, \dots, \vec{x}_n\}$ とする。このとき、サンプルは独立に抽出されたので、以下が成り立つ。
+    \begin{equation}
+      p(\mathcal{X} | \theta) = \prod_{k=1}^n p(\vec{x}_k | \theta)
+      \label{eq:likelihood}
+    \end{equation}
+    \item $\theta$ の関数として見たとき、$p(\mathcal{X} | \theta)$ はサンプル集合に対する $\theta$ の尤度（likelihood）と呼ばれる。
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{尤度（続き）}
+  \begin{itemize}
+    \item $\theta$ の最尤推定値（maximum likelihood estimate）とは、定義により、この $p(\mathcal{X} | \theta)$ を最大化する値 $\hat{\theta}$ のことである（\ref{fig:3.1}ページ図参照）。
+    \item 直感的には、これは実際に観測されたサンプルと、ある意味で最もよく合致する $\theta$ の値に対応している。
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{尤度（続き）}
+  \begin{figure}[htbp]
+    \includegraphics[scale = 0.80]{images/figure3-1.png}
+    \label{fig:3.1}
+  \end{figure}
+\end{frame}
+
+\section{対数尤度（logarithm of the likelihood）}
+\begin{frame}{対数尤度}
+  \begin{itemize}
+    \item 解析的な目的のためには、通常、尤度そのものよりも対数尤度（logarithm of the likelihood）を扱う方が簡単である。
+    \item 対数は単調増加関数であるため、対数尤度を最大化する $\hat{\theta}$ は、尤度そのものも最大化する。
+    \item もし $p(\mathcal{X} | \theta)$ が振る舞いの良い（滑らかな）、$\theta$ の微分可能な関数であれば、$\hat{\theta}$ は微分積分の標準的な手法によって求めることができる。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{対数尤度（続き）}
+  $\theta$ を $p$ 成分ベクトル $\theta = (\theta_1, \dots, \theta_p)^t$ とし、$\nabla_\theta$ を勾配演算子とすると,
+    \begin{equation}
+      \nabla_\theta \equiv \begin{bmatrix} \frac{\partial}{\partial \theta_1} \\ \vdots \\ \frac{\partial}{\partial \theta_p} \end{bmatrix} .
+      \label{eq:nabla}
+    \end{equation}
+    $l(\theta)$ を対数尤度関数とすると、
+    \begin{equation}
+      l(\theta) \equiv \ln p(\mathcal{X} | \theta).
+      \label{eq:log_likelihood}
+    \end{equation}
+\end{frame}
+
+
+\begin{frame}{対数尤度（続き）}
+  すると、以下が成り立つ
+    \begin{equation}
+      l(\theta) = \sum_{k=1}^n \ln p(\vec{x}_k | \theta).
+      \label{eq:log_likelihood_sum}
+    \end{equation}
+    \begin{equation}
+      \frac{\partial l}{\partial \vec{\theta}} = \sum_{k=1}^n \frac{\partial}{\partial \vec{\theta}} \ln p(\vec{x}_k | \theta) .\quad (i = 1, \dots, p)
+      \label{eq:gradient_log_likelihood}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{対数尤度（続き）}
+  \begin{itemize}
+    \item したがって、$\theta$ の最尤推定値に対する必要条件のセットは、$p$ 個の方程式 $\nabla_\theta l = 0$ のセットから得ることができる。
+    \item 勾配演算子を用いず表すと、
+    \begin{equation}
+      \begin{cases}
+        \displaystyle \frac{\partial l}{\partial \theta_1} = 0 \\
+        \displaystyle \frac{\partial l}{\partial \theta_2} = 0 \\
+        \vdots \\
+        \displaystyle \frac{\partial l}{\partial \theta_p} = 0
+      \end{cases}
+    \end{equation}
+  \end{itemize}
+
+\end{frame}
+
+
+\section{Conclusion}
+\begin{frame}{まとめ}
+  \begin{itemize}
+    \item 観測データが得られる確率（尤度）を最大化するパラメータこそが最適であると定義し、対数尤度の勾配を用いてその値を導出する方法の基本原理を説明した。
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{functionally independent}
+  \begin{itemize}
+    \item 異なるクラスのパラメータは関数的に独立している（functionally independent）とは、一言で言えば、\red{あるクラスのパラメータを推定する際に、他のクラスのデータやパラメータを一切気にする必要がないということ。}
+  \end{itemize}
+\end{frame}
+\begin{frame}{functionally independent（続き）}
+  \begin{itemize}
+    \item 例えば、「男性クラス($\omega_1$)」と「女性クラス($\omega_2$)」の身長の分布（正規分布）を作るとする。
+    \item 男性の平均身長($\mu_1$)を計算するのに、女性のデータは一切関係ない。女性の分散($\sigma_2^2$)を計算するのに、男性のデータは必要ない。
+    \item よって「男性だけのデータで男性のパラメータを決める」「女性だけのデータで女性のパラメータを決める」という、完全に別々の作業として処理できる。
+  \end{itemize}
+\end{frame}
+\begin{frame}{functionally independent（続き）}
+  \begin{itemize}
+    \item つまり、全体の尤度関数（最大化したい式）が、$L(\theta_1, \theta_2, \dots) = L_1(\theta_1) \times L_2(\theta_2) \times \dots$ のように、個別の項の掛け算にきれいに分解できるということ。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{ふるまいの良い関数（well-behaved function）}
+  \begin{itemize}
+    \item 「$p(\mathcal{X} | \theta)$ が振る舞いの良い（滑らかな）、$\theta$ の微分可能な関数」という表現は、数学的に厳密な定義というよりは、「微積分を使って最大値を求めるテクニック（勾配法など）が使えるような、都合の良い形をしている」ということを意味している。
+    \item 「これから紹介する $\nabla_\theta l = 0$ （偏微分してゼロと置く）という便利な解法を使うために、グラフがギザギザしたり途切れたりしていない、滑らかな形であると仮定しますよ」という、数学的な「お断り」の意。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{尤度}
+  \begin{itemize}
+    \item 確率（Probability）「ルール（モデル）が決まっているときに、データが出る可能性」例：サイコロを振って「3」が出る確率は 1/6
+    \item 尤度（Likelihood）「データが出たときに、そのルール（モデル）がどれくらい信頼できるか」例：サイコロを10回振ったら「3」が3回出たとする。そのサイコロが「公平（全部1/6）」な場合、どれくらいありそう？もし「3が出やすいサイコロ」だとしたら、その仮説の方がもっと自然？
+  \end{itemize}
+\end{frame}
+\begin{frame}{確率と尤度の違い}
+  \begin{itemize}
+    \item 確率は「ルールが決まっていて、そのルールのもとで何が起きやすいか」
+    \item 尤度は「実際に起きたことを見て、そのルールはどれくらい信頼できるか」
+  \end{itemize}
+\end{frame}
+
+
+
+
+\end{document}
+
+% 参考文献
+% Duda, R. O., & Hart, P. E. (1973). Pattern classification and scene analysis. Wiley.
