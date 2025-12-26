@@ -1,0 +1,132 @@
+% Duda & Hart 章2.6 に対応するオリジナル解説スライド（日本語、数式あり）
+\documentclass[dvipdfmx,12pt,notheorems]{beamer}
+\usetheme{metropolis}
+\usefonttheme{professionalfonts}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+% カスタム色コマンド
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\green}[1]{\textcolor{green!40!black}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue!80!black}{#1}}
+
+% メタ情報
+\title{Duda \& Hart \\2.6 ERROR PROBABILITIES AND INTEGRALS}
+\author{作成者: おおつかたく}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{目次}
+  \tableofcontents
+\end{frame}
+
+\section{Purpose and Background}
+\begin{frame}{目的と背景}
+  \begin{itemize}
+    \item これまで分類器における識別関数について多クラス分類とニクラス分類での扱いと領域を分離する決定境界(decision boundaries)について説明。
+    \item ここでは、分類器の\red{エラー確率(error probabilities)}と全体の確率を計算する\red{積分(integrals)}について説明。
+    \item 分類器を、特徴空間を決定領域に分割するための装置として考えることにより、ベイズ分類器の動作についてさらなる洞察を得ることができる。
+  \end{itemize}
+\end{frame}
+
+\section{Two-Category Case}
+\begin{frame}{二クラスの場合}
+  まず、ニクラス分類を考える。
+  \begin{itemize}
+    \item 分類器が空間を二つの領域 $\mathcal{R}_1$ と $\mathcal{R}_2$ に分割するとする。
+    \item 分類エラー（誤分類）が発生するケースは二通りある。
+    \begin{enumerate}
+      \item 観測 $\vec{x}$ が領域 $\mathcal{R}_2$ に落ちたが、真の自然の状態が $\omega_1$ である場合
+      \item 観測 $\vec{x}$ が領域 $\mathcal{R}_1$ に落ちたが、真の自然の状態が $\omega_2$ である場合
+    \end{enumerate}
+    \item この事象は互いに排他的かつ網羅的であるため、誤り確率 $P(error)$ は以下のようになる。
+  \end{itemize}
+  \begin{equation}
+    \red{P(\text{error}) = P(\vec{x} \in \mathcal{R}_2, \omega_1) + P(\vec{x} \in \mathcal{R}_1, \omega_2)}.
+    \label{eq:error_P}
+  \end{equation}
+\end{frame}
+
+\begin{frame}{ニクラスの場合（続き）}
+  \begin{itemize}
+    \item この同時確率を展開すると、
+    \begin{equation}
+      \red{P(\text{error}) = P(\vec{x} \in \mathcal{R}_2 | \omega_1) P(\omega_1) + P(\vec{x} \in \mathcal{R}_1 | \omega_2) P(\omega_2)}.
+      \label{eq:error_P2}
+    \end{equation}
+    \item そして、特徴ベクトル $\vec{x}$ については、この確率は領域 $\mathcal{R}_i$ における積分（確率密度の総和）として表せる。
+    \begin{equation}
+      \red{P(\text{error}) = \int_{\mathcal{R}_2} p(\vec{x}\mid\omega_1)P(\omega_1)d\vec{x} + \int_{\mathcal{R}_1} p(\vec{x}\mid\omega_2)P(\omega_2)d\vec{x}}.
+      \label{eq:error_P3}
+    \end{equation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{二クラスの場合（続き）}
+
+  \begin{itemize}
+    \item 各クラスに対して、誤分類される領域での条件付き確率密度関数と事前確率の積を積分することで、全体の誤り確率を求めることができる。
+    \item 合計二つの項は関数 $p(\vec{x}\mid\omega_i)P(\omega_i)$ の\red{裾野（テール）}の領域にすぎない。
+    \item この式\eqref{eq:error_P3}は一次元のケースについて下の図2.6にしめされる。
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{二クラスの場合（続き）}
+  \begin{figure}[htbp]
+    \includegraphics[scale = 0.80]{images/2-6_error.png}
+    \label{fig:2-6_error}
+  \end{figure}
+  %%図\ref{fig:2-6_error} %% \refが通常の参照
+\end{frame}
+\begin{frame}{二クラスの場合（続き）}
+  \begin{itemize}
+    \item 領域 $\mathcal{R}_1$ と $\mathcal{R}_2$ は任意に選ばれたため、この誤り確率は最小であるとは限らない。
+    \item 決定境界を左に移動させることで暗い「三角形」の領域を排除し、誤り確率を減らせる。
+  \end{itemize}
+\end{frame}
+
+\section{Multiple-Class Case}
+\begin{frame}{多クラスの場合}
+  \begin{itemize}
+    \item 多クラスの場合では、正解するよりも誤るほうが多くのパターン（方法）があるため、以下のように\red{正解する確率}を計算するほうが簡単。
+  \end{itemize}
+  \begin{equation}
+    \begin{split}
+      P(\text{correct}) &= \sum_{i=1}^{c} P(\vec{x} \in \mathcal{R}_i, \omega_i) \\
+      &= \sum_{i=1}^{c} P(\vec{x} \in \mathcal{R}_i \mid \omega_i) P(\omega_i) \\
+      &= \sum_{i=1}^{c} \int_{\mathcal{R}_i} p(\vec{x} \mid \omega_i) P(\omega_i) \, d\vec{x}.
+    \end{split}
+  \label{eq:prob_correct_multiclass}
+  \end{equation} % (19)に相当するラベル
+\end{frame}
+
+\begin{frame}{多クラスの場合（続き）}
+  \begin{itemize}
+    \item この結果は特徴空間が決定領域にどのように分割されても有効である。
+    \item ベイズ分類器は、被積分関数が最大となるように領域を選択することによって、この正解確率を最大化する。
+    \item 他のいかなる分割も、これより小さな誤り確率（より大きな正解確率）をもたらすことはできない。
+  \end{itemize}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{まとめ}
+  \begin{itemize}
+    \item 各クラスに対して、\red{誤分類される領域での条件付き確率密度関数と事前確率の積を積分}することで、全体の誤り確率を求めることができる。
+    \item 多クラスの場合では、正解するよりも誤るほうが多くのパターン（方法）があるため、\red{正解する確率}を計算する。
+  \end{itemize}
+\end{frame}
+
+\end{document}
+
+% 参考文献
+% Duda, R. O., & Hart, P. E. (1973). Pattern classification and scene analysis. Wiley.
