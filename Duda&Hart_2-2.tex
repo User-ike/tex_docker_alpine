@@ -1,0 +1,174 @@
+% try_2.2.tex
+% Duda & Hart 章2.2–2.3 に対応するオリジナル解説スライド（日本語、数式あり）
+\documentclass[dvipdfmx,12pt,notheorems]{beamer}
+\usetheme{metropolis}
+\usefonttheme{professionalfonts}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+% カスタム色コマンド
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\green}[1]{\textcolor{green!40!black}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue!80!black}{#1}}
+
+% メタ情報
+\title{Duda \& Hart \\2.2Bayes Decision Theory-The Continuous Case}
+\author{作成者: おおつかたく}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{目次}
+  \tableofcontents
+\end{frame}
+
+\section{Purpose and Background}
+\begin{frame}{目的と背景}
+  \begin{itemize}
+    \item 「ベイズ決定理論（BAYES DECISION THEORY）」は、与えられた入力データ（特徴ベクトル $\mathbf{x}$）を、\red{複数のクラス（$\omega_1, \omega_2, \ldots$）のいずれかに分類}する際の最適な意思決定を行うための枠組み
+    \item 連続的な特徴量を持つ場合における各actionが生ずるcostを、損失関数をもちいて表し\red{期待損失を最小化する}
+  \end{itemize}
+\end{frame}
+
+\section{Bayes Decision Theory}
+\begin{frame}{ベイズの定理（復習）}
+  観測ベクトル $x$ が与えられたとき，事後確率は
+  \begin{equation}
+    P(\omega_j\mid x)=\frac{p(x\mid\omega_j)P(\omega_j)}{p(x)},
+    \label{eq:bayes_P}
+  \end{equation}
+  \begin{equation}
+    p(x)=\sum_{i=1}^{S}p(x\mid\omega_i)P(\omega_i).
+    \label{eq:bayes_p}
+  \end{equation}
+  \begin{itemize}
+    \item $p(x\mid\omega_j)$: クラス条件付き確率密度（連続の場合）
+    \item $P(\omega_j)$: 事前確率
+  \end{itemize}
+\end{frame}
+
+\section{Generalizations}
+\begin{frame}{一般化}
+  1.1の考えを形式化し4つの点で一般化する
+  \begin{enumerate} %% enumerateで番号をつけれる
+    \item 複数の特徴の使用を可能にする
+    \item 自然の状態（カテゴリ、クラス）が2つ以上あることを可能にする
+    \item 自然の状態を決定すること以外の行動（アクション）を可能にする
+    \item エラーの確率よりも一般的な損失関数（loss function）を導入する
+  \end{enumerate}
+\end{frame}
+
+\section{Expected loss (risk) and Decision rule}
+\begin{frame}{期待損失（リスク）と決定則(decision rule)}
+  \begin{itemize}
+    \item 自然状態が $\omega_j$ という条件下で行動 $\alpha_i$ によって生じる\red{損失}を\red{ $\lambda(\alpha_i\mid\omega_j)$ }とする。
+    \item 特徴ベクトル $\vec{x}$ をd個の成分を持つベクトル値確率変数とし、\red{ $p(\vec{x}\mid\omega_j)$ }を $\vec{x}$ の状態条件付き確率密度関数、すなわち、自然の状態が $\omega_j$ であるという条件のもとでの $\vec{x}$ の\red{確率密度関数}とする
+    \item 最後に、\red{ $P(\omega_j)$ }を自然が状態 $\omega_j$ にある\red{事前確率}とする
+  \end{itemize}
+
+\end{frame}
+\begin{frame}{期待損失（リスク）と決定則（続き1）}
+  この時、\red{事後確率 $P(\omega_j\mid \vec{x})$ }は\green{ベイズ定理}によって $p(\vec{x}\mid\omega_j)$ から計算できる：
+  \begin{equation}
+    P(\omega_j\mid \vec{x})=\frac{p(\vec{x}\mid\omega_j)P(\omega_j)}{p(\vec{x})}.
+    \label{eq:bayes_P2}
+  \end{equation}
+  ただし、
+  \begin{equation}
+    p(\vec{x})=\sum_{i=1}^{S}p(\vec{x}\mid\omega_i)P(\omega_i).
+    \label{eq:bayes_p2}
+  \end{equation}
+
+\end{frame}
+\begin{frame}{期待損失（リスク）と決定則（続き2）}
+  \begin{itemize}
+    \item 特定の $\vec{x}$ を観測し、行動 $\alpha_i$ をとることを考えていると仮定する。もし真の自然の状態が $\omega_j$ であれば、\red{損失 $\lambda(\alpha_i\mid\omega_j)$ }をこうむることになる。
+    \item \red{$P(\omega_j\mid \vec{x})$ }は真の自然の状態が\red{ $\omega_j$ である確率}であるため、行動 $\alpha_i$ をとることに関連する期待損失は単に以下のようになる。
+  \end{itemize}
+  \begin{equation}
+    R(\alpha_i\mid \vec{x})=\sum_{j=1}^{S}\lambda(\alpha_i\mid\omega_j)P(\omega_j\mid \vec{x}).
+    \label{eq:conditional_risk}
+  \end{equation}
+\end{frame}
+\begin{frame}{期待損失（リスク）と決定則（続き3）}
+  \begin{itemize}
+    \item 期待損失は\blue{リスク}と呼ばれ、 \red{$R(\alpha_i\mid \vec{x})$ }は\red{条件付きリスク}として知られている。
+    \item 特定の観測 $\vec{x}$ に遭遇した時は常に\blue{条件付きリスクを最小化する行動を選択することによって期待損失を最小化できる。}
+  \end{itemize}
+\end{frame}
+
+\section{Optional Bayes Decision procedure}
+\begin{frame}{最適なベイズ決定手順であることを示す}
+  \begin{itemize}
+    \item 全体的なリスク $R$ を最小化し、事前確率 $P(\omega_j)$ に対するBayes decision ruleを見つける。
+    \item Decision ruleとはあらゆる観測 $\vec{x}$ に対して\blue{どの行動をとるべきかを示す関数 $\alpha(\vec{x})$ }のこと
+    \item 具体的にはすべての $x$ に対して決定関数(The decision function) $\alpha(x)$ は、\blue{$\alpha_1,\dots,\alpha_a$ の $a$ 個の値}のいずれかをとる
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{最適なベイズ決定手順であることを示す（続き1）}
+  \begin{itemize}
+    \item 全体的なリスク$R$ は与えられた\green{decision ruleに関連付けられた期待損失}である
+    \item 行動 $\alpha_i$ に関連する条件付きリスクは $R(\alpha_i\mid \vec{x})$ であり、decision ruleがその行動を特定するため\red{全体的なリスク}は
+  \end{itemize}
+  \begin{equation}
+    \red{R} = \int R(\alpha({\vec{x}}) | {\vec{x}}) p({\vec{x}}) \, d{\vec{x}}
+    \label{eq:overall_risk}
+  \end{equation}
+
+  \footnotesize{このの式はあらゆる観測 $\vec{x}$ について、特定のdecision rule $\alpha(\vec{x})$ に従って行動した場合の平均期待損失（全体的なリスク）を計算するものであり、Bayes decision ruleの核心。}
+\end{frame}
+
+\begin{frame}{最適なベイズ決定手順であることを示す（続き2）}
+  \begin{itemize}
+    \item ここで $d\vec{x}$ は $d$ 次元空間の体積要素を示す我々の表記であり、
+          積分は特徴空間全体にわたって行われる。
+    \item \red{明らかにすべての $\vec{x}$ に対して$R(\alpha(\vec{x})\mid \vec{x})$ が可能な限り小さくなるように $\alpha(\vec{x})$ を選ばれるならば、
+          全体的なリスクは最小化される。}
+  \end{itemize}
+\end{frame}
+
+\section{Bayes risk}
+\begin{frame}{ベイズリスク}
+  このことから、Bayes decision ruleは次のように正当化されている：
+
+  全体的なリスクを最小化するためには、 $\vec{x}$ を観測したときすべての $i = 1,\dots,a$について条件付きリスクの式
+  \eqref{eq:conditional_risk}
+  \[
+    R(\alpha_i\mid \vec{x})=\sum_{j=1}^{S}\lambda(\alpha_i\mid\omega_j)P(\omega_j\mid \vec{x}).
+  \]
+  を計算し、そのうち\red{ $R(\alpha_i\mid \vec{x})$ が最小となるような行動 $\alpha_i$ }を選択する。
+\end{frame}
+
+\begin{frame}{ベイズリスク（続き1）}
+  \begin{itemize}
+    \item 複数の行動が $R(\alpha_i\mid \vec{x})$ を最小化する場合、これらのうちどの行動をとっても問題ない。
+    \item 都合の良い任意のタイブレーク規則(tie-breaking rule)を使用できることに注意しろ。
+    \item 結果として得られる最小の全体的なリスクは\red{ベイズリスク(The Bayes risk)}と呼ばれ、これは達成可能な上限である。
+  \end{itemize}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{まとめ}
+  \begin{itemize}
+    \item 期待損失(リスク) $R(\alpha_i\mid \vec{x})$ は特定の観測 $\vec{x}$ に対して\red{最小化する行動 $\alpha_i$ }を選択することによって期待損失を最小化できる。
+    \item decision ruleに基づく全体的なリスクは式\eqref{eq:overall_risk}
+  \[
+    R = \int R(\alpha({\vec{x}}) | {\vec{x}}) p({\vec{x}}) \, d{\vec{x}}
+  \]
+    であり、最小の全体的なリスクは\red{ベイズリスク(The Bayes risk)}と呼ばれ、達成可能な最良な性能である。
+  \end{itemize}
+\end{frame}
+
+\end{document}
+
+% 参考文献
+% Duda, R. O., & Hart, P. E. (1973). Pattern classification and scene analysis. Wiley.
